@@ -1,9 +1,9 @@
 # ConAir
 
-ConAir is a macOS utility that automatically mutes/unmutes your AirPods when you click the microphone button. It consists of two main components:
+ConAir is a macOS utility that automatically mutes/unmutes your microphone in any app when you click the AirPods. It consists of two main components:
 
 1. A background daemon that monitors system logs for AirPods microphone button events
-2. A macOS widget that provides a visual indicator of the microphone state
+2. A macOS widget that provides a visual indicator of the microphone state and that is also clickable
 
 ## Prerequisites
 
