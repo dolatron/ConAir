@@ -14,11 +14,32 @@ PROJECT_ROOT="$( cd "$SCRIPT_DIR/.." && pwd )"
 
 echo "Installing ConAir..."
 
+# Uninstall old version first
+echo "Removing old installation..."
+
+# Stop and remove the old daemon
+LAUNCH_AGENTS_DIR="$HOME/Library/LaunchAgents"
+if [ -f "$LAUNCH_AGENTS_DIR/com.conair.mic.daemon.plist" ]; then
+    launchctl unload "$LAUNCH_AGENTS_DIR/com.conair.mic.daemon.plist" 2>/dev/null || true
+    rm "$LAUNCH_AGENTS_DIR/com.conair.mic.daemon.plist"
+fi
+
+# Remove old daemon directory
+DAEMON_DIR="$HOME/.conair_daemon"
+rm -rf "$DAEMON_DIR"
+
+# Remove old widget from Applications
+if [ -d "/Applications/ConAirWidget.app" ]; then
+    # Force quit the app if it's running
+    killall "ConAirWidget" 2>/dev/null || true
+    # Remove the app
+    rm -rf "/Applications/ConAirWidget.app"
+fi
+
 # Install ConAir Daemon
 echo "Installing ConAir Daemon..."
 
 # Create daemon directory
-DAEMON_DIR="$HOME/.conair_daemon"
 mkdir -p "$DAEMON_DIR"
 
 # Copy daemon script
@@ -31,7 +52,6 @@ else
 fi
 
 # Create Launch Agent plist
-LAUNCH_AGENTS_DIR="$HOME/Library/LaunchAgents"
 mkdir -p "$LAUNCH_AGENTS_DIR"
 
 cat > "$LAUNCH_AGENTS_DIR/com.conair.mic.daemon.plist" << EOL
@@ -58,8 +78,7 @@ cat > "$LAUNCH_AGENTS_DIR/com.conair.mic.daemon.plist" << EOL
 </plist>
 EOL
 
-# Unload the Launch Agent if it exists, then load it
-launchctl unload "$LAUNCH_AGENTS_DIR/com.conair.mic.daemon.plist" 2>/dev/null || true
+# Load the Launch Agent
 launchctl load "$LAUNCH_AGENTS_DIR/com.conair.mic.daemon.plist"
 
 # Install ConAir Widget
@@ -70,9 +89,9 @@ cd "$PROJECT_ROOT/ConAirWidget"
 xcodebuild -project ConAirWidget.xcodeproj -scheme ConAirWidget -configuration Release -derivedDataPath build CODE_SIGN_IDENTITY=- CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
 
 if [ $? -eq 0 ]; then
-    echo -e "${GREEN}✅ ConAir Widget installed!${NC}"
+    echo -e "${GREEN}✅ ConAir Widget built successfully!${NC}"
 else
-    echo -e "${RED}❌ Failed to install ConAir Widget${NC}"
+    echo -e "${RED}❌ Failed to build ConAir Widget${NC}"
     exit 1
 fi
 
@@ -81,6 +100,9 @@ cp -R "build/Build/Products/Release/ConAirWidget.app" "/Applications/"
 
 # Register with Launch Services
 /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f "/Applications/ConAirWidget.app"
+
+# Launch the app
+open "/Applications/ConAirWidget.app"
 
 echo -e "${GREEN}✅ ConAir installation complete!${NC}"
 echo "The widget will appear in your Notification Center."

@@ -8,31 +8,29 @@ ConAir is a macOS utility that automatically mutes/unmutes your AirPods when you
 ## Prerequisites
 
 - macOS 12.0 or later
-- Xcode 14.0 or later (for building the widget)
+- Xcode 14.0 or later (for building)
 - AirPods or other compatible Apple audio devices
 
 ## Installation
 
-### 1. Install the Daemon
-
-Run the installation script in your terminal:
+The installation process is now simplified with a single install script that handles both the daemon and widget installation:
 
 ```bash
-chmod +x install_conair_daemon.sh
-./install_conair_daemon.sh
+# Make the install script executable
+chmod +x scripts/install.sh
+
+# Run the installer
+./scripts/install.sh
 ```
 
 This will:
-- Create a daemon directory at `~/.conair_daemon`
-- Install the daemon script
-- Create and load a Launch Agent to run the daemon automatically
-- Start the daemon service
+- Remove any previous installation
+- Install and start the ConAir daemon
+- Build and install the ConAir widget
+- Launch the widget automatically
+- Configure everything to start automatically on login
 
-### 2. Install the Widget
-
-1. Open the `ConAirWidget.xcodeproj` in Xcode
-2. Build and run the project (⌘R)
-3. The widget will be installed in your Notification Center
+The installer will provide feedback during the process and let you know when it's complete.
 
 ## Usage
 
@@ -57,26 +55,29 @@ If you encounter any issues:
 cat ~/.conair_daemon/conair_daemon.log
 ```
 
-2. Restart the daemon:
+2. Try reinstalling:
 ```bash
-launchctl unload ~/Library/LaunchAgents/com.conair.mic.daemon.plist
-launchctl load ~/Library/LaunchAgents/com.conair.mic.daemon.plist
+./scripts/install.sh
 ```
 
 3. Ensure your AirPods are properly connected and recognized by macOS
 
-## Uninstallation
+## Manual Uninstallation
 
-To remove ConAir:
+While the installer will handle removing old versions automatically, you can manually uninstall ConAir by:
 
-1. Unload and remove the daemon:
+1. Stop and remove the daemon:
 ```bash
 launchctl unload ~/Library/LaunchAgents/com.conair.mic.daemon.plist
 rm ~/Library/LaunchAgents/com.conair.mic.daemon.plist
 rm -rf ~/.conair_daemon
 ```
 
-2. Remove the widget from your Notification Center
+2. Remove the widget:
+```bash
+killall "ConAirWidget" 2>/dev/null || true
+rm -rf "/Applications/ConAirWidget.app"
+```
 
 ## License
 
@@ -84,7 +85,7 @@ rm -rf ~/.conair_daemon
 
 ## Contributing
 
-[Your contribution guidelines] 
+[Your contribution guidelines]
 
 ## Build Notes
 
