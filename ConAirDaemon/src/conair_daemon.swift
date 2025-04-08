@@ -1,13 +1,3 @@
-#!/bin/bash
-
-LAUNCH_AGENT_PATH="$HOME/Library/LaunchAgents/com.conair.mic.daemon.plist"
-DAEMON_PATH="$HOME/.conair_daemon"
-
-# Create directory for daemon
-mkdir -p "$DAEMON_PATH"
-
-# Move daemon script
-cat > "$DAEMON_PATH/conair_daemon.swift" <<EOL
 #!/usr/bin/swift
 
 import Foundation
@@ -61,11 +51,11 @@ class ConAirDaemon {
     }
     
     private func log(_ message: String) {
-        let logPath = "$HOME/.conair_daemon/conair_daemon.log"
+        let logPath = "\(FileManager.default.homeDirectoryForCurrentUser.path)/.conair_daemon/conair_daemon.log"
         let logMessage = "[\(Date())] \(message)\n"
         if let data = logMessage.data(using: .utf8) {
             if FileManager.default.fileExists(atPath: logPath) {
-                if let fileHandle = FileHandle(forWritingAtPath: logPath) {
+                if let fileHandle = try? FileHandle(forWritingTo: URL(fileURLWithPath: logPath)) {
                     fileHandle.seekToEndOfFile()
                     fileHandle.write(data)
                     fileHandle.closeFile()
@@ -80,39 +70,4 @@ class ConAirDaemon {
 let daemon = ConAirDaemon()
 daemon.start()
 
-RunLoop.main.run()
-EOL
-
-# Make script executable
-chmod +x "$DAEMON_PATH/conair_daemon.swift"
-
-# Create Launch Agent plist file
-cat > "$LAUNCH_AGENT_PATH" <<EOL
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-    <key>Label</key>
-    <string>com.conair.mic.daemon</string>
-    <key>ProgramArguments</key>
-    <array>
-        <string>/usr/bin/swift</string>
-        <string>$DAEMON_PATH/conair_daemon.swift</string>
-    </array>
-    <key>RunAtLoad</key>
-    <true/>
-    <key>KeepAlive</key>
-    <true/>
-    <key>StandardOutPath</key>
-    <string>$DAEMON_PATH/output.log</string>
-    <key>StandardErrorPath</key>
-    <string>$DAEMON_PATH/error.log</string>
-</dict>
-</plist>
-EOL
-
-# Load the Launch Agent
-launchctl unload "$LAUNCH_AGENT_PATH"
-launchctl load "$LAUNCH_AGENT_PATH"
-
-echo "✅ ConAir mic daemon installed and running! Check logs at ~/.conair_daemon/conair_daemon.log"
+RunLoop.main.run() 

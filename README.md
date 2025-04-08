@@ -85,3 +85,9 @@ rm -rf ~/.conair_daemon
 ## Contributing
 
 [Your contribution guidelines] 
+
+## Build Notes
+
+The built app will be located at:
+```
+ConAirWidget/build/Build/Products/Release/ConAirWidget.app 
