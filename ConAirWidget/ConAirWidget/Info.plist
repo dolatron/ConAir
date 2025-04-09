@@ -9,7 +9,7 @@
     <key>CFBundleIdentifier</key>
     <string>com.conair.widget</string>
     <key>CFBundleName</key>
-    <string>ConAirWidget</string>
+    <string>ConAir</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
@@ -18,5 +18,12 @@
     <string>1</string>
     <key>LSMinimumSystemVersion</key>
     <string>$(MACOSX_DEPLOYMENT_TARGET)</string>
+    <key>NSHumanReadableCopyright</key>
+    <string>Copyright © 2025 ConAir Contributors</string>
+    <key>NSAboutPanelInfo</key>
+    <dict>
+        <key>NSAboutPanelInfoCredits</key>
+        <string>ConAir is a macOS menu bar app that automatically mutes/unmutes your microphone when you click your AirPods. It provides a visual indicator of your microphone state and allows for quick toggling of the mute status.</string>
+    </dict>
 </dict>
 </plist> 

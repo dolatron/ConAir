@@ -75,8 +75,8 @@ rm -rf ~/.conair_daemon
 
 2. Remove the widget:
 ```bash
-killall "ConAirWidget" 2>/dev/null || true
-rm -rf "/Applications/ConAirWidget.app"
+killall "ConAir" 2>/dev/null || true
+rm -rf "/Applications/ConAir.app"
 ```
 
 ## License

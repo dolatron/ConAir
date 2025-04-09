@@ -28,12 +28,12 @@ fi
 DAEMON_DIR="$HOME/.conair_daemon"
 rm -rf "$DAEMON_DIR"
 
-# Remove old widget from Applications
-if [ -d "/Applications/ConAirWidget.app" ]; then
+# Remove old app from Applications
+if [ -d "/Applications/ConAir.app" ]; then
     # Force quit the app if it's running
-    killall "ConAirWidget" 2>/dev/null || true
+    killall "ConAir" 2>/dev/null || true
     # Remove the app
-    rm -rf "/Applications/ConAirWidget.app"
+    rm -rf "/Applications/ConAir.app"
 fi
 
 # Install ConAir Daemon
@@ -81,30 +81,30 @@ EOL
 # Load the Launch Agent
 launchctl load "$LAUNCH_AGENTS_DIR/com.conair.mic.daemon.plist"
 
-# Install ConAir Widget
-echo "Installing ConAir Widget..."
+# Install ConAir
+echo "Installing ConAir..."
 
-# Build the widget
+# Build the app
 cd "$PROJECT_ROOT/ConAirWidget"
-xcodebuild -project ConAirWidget.xcodeproj -scheme ConAirWidget -configuration Release -derivedDataPath build CODE_SIGN_IDENTITY=- CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
+xcodebuild -project ConAirWidget.xcodeproj -scheme ConAir -configuration Release -derivedDataPath build CODE_SIGN_IDENTITY=- CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
 
 if [ $? -eq 0 ]; then
-    echo -e "${GREEN}✅ ConAir Widget built successfully!${NC}"
+    echo -e "${GREEN}✅ ConAir built successfully!${NC}"
 else
-    echo -e "${RED}❌ Failed to build ConAir Widget${NC}"
+    echo -e "${RED}❌ Failed to build ConAir${NC}"
     exit 1
 fi
 
-# Copy the built widget to Applications
-cp -R "build/Build/Products/Release/ConAirWidget.app" "/Applications/"
+# Copy the built app to Applications
+cp -R "build/Build/Products/Release/ConAir.app" "/Applications/ConAir.app"
 
 # Register with Launch Services
-/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f "/Applications/ConAirWidget.app"
+/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f "/Applications/ConAir.app"
 
 # Launch the app
-open "/Applications/ConAirWidget.app"
+open "/Applications/ConAir.app"
 
 echo -e "${GREEN}✅ ConAir installation complete!${NC}"
-echo "The widget will appear in your Notification Center."
+echo "The app will appear in your menu bar."
 echo "The daemon is running and will automatically start on login."
 echo "Logs are available at: $DAEMON_DIR/conair_daemon.log" 

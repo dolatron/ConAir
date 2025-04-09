@@ -98,10 +98,10 @@
 			fileSystemSynchronizedGroups = (
 				C5C71D9D2D4BF02B00B0B38C /* ConAirWidget */,
 			);
-			name = ConAirWidget;
+			name = ConAir;
 			packageProductDependencies = (
 			);
-			productName = ConAirWidget;
+			productName = ConAir;
 			productReference = C5C71D9B2D4BF02B00B0B38C /* ConAirWidget.app */;
 			productType = "com.apple.product-type.application";
 		};

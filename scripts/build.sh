@@ -1,34 +1,38 @@
 #!/bin/bash
 
-# Exit on error
-set -e
+# Build script for ConAir
+# This script builds the app and widget extension
 
-# Colors for output
-GREEN='\033[0;32m'
-RED='\033[0;31m'
-NC='\033[0m' # No Color
+# Configuration
+APP_NAME="ConAir"
+WIDGET_NAME="ConAirWidget"
+SCHEME="ConAir"
+CONFIGURATION="Release"
+DERIVED_DATA_PATH="build"
+ARCHIVE_PATH="build/ConAir.xcarchive"
+EXPORT_PATH="build/ConAir"
+EXPORT_OPTIONS_PLIST="ExportOptions.plist"
 
-echo -e "${GREEN}Building ConAir Widget...${NC}"
+# Clean build directory
+echo "Cleaning build directory..."
+rm -rf "$DERIVED_DATA_PATH"
+mkdir -p "$DERIVED_DATA_PATH"
 
-# Get the directory where the script is located
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-PROJECT_DIR="$SCRIPT_DIR/ConAirWidget"
-
-# Build the project
+# Build the app
+echo "Building $APP_NAME..."
 xcodebuild \
-    -project "$PROJECT_DIR/ConAirWidget.xcodeproj" \
-    -scheme ConAirWidget \
-    -configuration Release \
-    -derivedDataPath "$PROJECT_DIR/build" \
-    CODE_SIGN_IDENTITY="-" \
-    CODE_SIGNING_REQUIRED=NO \
-    CODE_SIGNING_ALLOWED=NO
+    -scheme "$SCHEME" \
+    -configuration "$CONFIGURATION" \
+    -derivedDataPath "$DERIVED_DATA_PATH" \
+    -archivePath "$ARCHIVE_PATH" \
+    archive
 
-# Check if build was successful
-if [ $? -eq 0 ]; then
-    echo -e "${GREEN}Build successful!${NC}"
-    echo "The built app is located in: $PROJECT_DIR/build/Build/Products/Release/ConAirWidget.app"
-else
-    echo -e "${RED}Build failed!${NC}"
-    exit 1
-fi 
+# Export the app
+echo "Exporting $APP_NAME..."
+xcodebuild \
+    -exportArchive \
+    -archivePath "$ARCHIVE_PATH" \
+    -exportPath "$EXPORT_PATH" \
+    -exportOptionsPlist "$EXPORT_OPTIONS_PLIST"
+
+echo "Build complete! App is available at: $EXPORT_PATH/$APP_NAME.app" 
